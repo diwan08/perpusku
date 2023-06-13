@@ -9,7 +9,7 @@ exports.up = function(knex) {
     t.string("password").notNullable()
     t.string("name").notNullable()
     t.text("address").notNullable()
-    t.dateTime("brithdate").notNullable()
+    t.dateTime("birthdate").notNullable()
     t.enum("role",["officer","member"]).notNullable()
     t.string("avatar")
     t.timestamps(true,true)

@@ -1,6 +1,6 @@
 // Update with your config settings.
 require("dotenv").config()
-const{MYSQL_HOST,MYSQL_PORT,MYSQL_USER,MYSQL_PASS,MYSQL_NAME} =process.env
+const{MYSQL_HOST,MYSQL_PORT,MYSQL_USER,MYSQL_PASS,MYSQL_NAME} = process.env
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */

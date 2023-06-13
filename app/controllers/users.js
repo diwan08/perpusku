@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 
 
 module.exports = class userController{
-    static async createUser(req, res , next){
+    static async createUser(req, res, next){
         try {
             const {error, value}=userSchema.validate(req.body)
             if (error) {
@@ -24,7 +24,7 @@ module.exports = class userController{
                         password:bcrypt.hashSync(value.password, 10),
                         name: value.name,
                         address: value.address,
-                        brithdate: value.brithdate,
+                        birthdate: value.birthdate,
                         role: value.role
                     })
                     .catch(err => {

@@ -19,9 +19,9 @@ module.exports= Joi.object({
         "any.required":"address cannot be empty",
         "string.base":"address must be a text"
     }),
-    brithdate: Joi.date().required().messages({
-        "any.required":"brithdate cannot be empty",
-        "date.base":"brithdate must be number"
+    birthdate: Joi.date().required().messages({
+        "any.required":"birthdate cannot be empty",
+        "date.base":"birthdate must be number"
     }),
     role: Joi.string().required().valid("officer","member").messages({
         "any.required":"role cannot be empty",

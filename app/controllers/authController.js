@@ -16,7 +16,7 @@ module.exports = class authController {
             
             // get data user
             const user = await db("users").where({username: value.username}).first()
-            if (user) {
+            if (!user) {
                 return res.boom.unauthorized("wrong username, please check again!!")
             }
             // check password
