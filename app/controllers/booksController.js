@@ -1,4 +1,5 @@
 require("dotenv").config()
+const { log } = require("console")
 const db            = require("../../databases")
 const bookSchema    =require("../validations/book.schema")
 
@@ -41,24 +42,24 @@ module.exports= class bookController {
     }
     static async getAll(req, res , next) {
         try {
-            
-            const { page= 1, limit= 15 , seacrh=""}=req.query
+     
+            //get data qury params for paginations, query params ?
+            const { page = 1, limit = 25, search = "", order = "asc" } = req.query;
 
-            // get all 
-            const book = await db("books")
-                .select("id","name", "author", "category", "publisher","publication_year", "stock","created_at", "updated_at")
+            const books = await db("books")
                 .limit(+limit)
-                .offset(+limit + +page - +limit)
-                .where("name", "like" ,`%${seacrh}`)
+                .offset(+limit * +page - +limit)
+                .orderBy("created_at", order)
+                .where("name", "like", `%${search}%`);
 
-                return res.status(201).json({
-                    success: true,
-                    message: "get user sucessfully",
-                    book
-                })
-        } catch (error) {
-            next(error)
-        }
+            return res.json({
+                success: true,
+                message: "Data books successfully retrieved",
+                books,
+            });
+                } catch (error) {
+                    next(error)
+                }
     }
     static async getDetail(req, res , next) {
         try {

@@ -2,16 +2,16 @@ require('dotenv').config()
 const userSchema = require("../validations/users.schema")
 const db = require("../../databases")
 const bcrypt = require("bcrypt")
-const { log } = require('console')
+
 
 
 module.exports = class userController{
     static async createUser(req, res, next){
         try {
-           const roleUser= req.user.role
-            if (roleUser == "member") {
-                return res.boom.badRequest("User doesn't have permission")
-            }
+        //    const roleUser= req.user.role
+        //     if (roleUser == "member") {
+        //         return res.boom.badRequest("User doesn't have permission")
+        //     }
             const {error, value}=userSchema.validate(req.body)
             if (error) {
                 return res.boom.badData(error.message)
@@ -47,23 +47,24 @@ module.exports = class userController{
     static async getAll(req, res, next) {
         try {
             
-            const {page= 1, limit = 15, seacrh= ""}= req.query
+            
+            //get data qury params for paginations, query params ?
+            const { page = 1, limit = 25, search = "", order = "asc" } = req.query;
 
-            // get all data user
-            const user = await db("users")
-                .select("id", "name","address","birthdate","role","created_at","updated_at")
+            const users = await db("users")
                 .limit(+limit)
-                .offset(+limit + +page - +limit)
-                .where("name", "like", `%${seacrh}`)
-            // return console.log(user);
-                return res.json({
-                    success: true,
-                    message: "get user successfully",
-                    user
-                })
-        } catch (error) {
-            next(error)
-        }
+                .offset(+limit * +page - +limit)
+                .orderBy("created_at", order)
+                .where("name", "like", `%${search}%`);
+
+            return res.json({
+                success: true,
+                message: "Data users successfully retrieved",
+                users,
+            });
+                } catch (error) {
+                    next(error)
+                }
     }
     static async getdetail(req,res,next) {
         try {
@@ -73,6 +74,55 @@ module.exports = class userController{
            if (!user) {
                 return res.boom.notFound("user is not found")
            }
+           return res.status(201).json({
+                success: true,
+                message: "get detail retrieved",
+                user
+           })
+        } catch (error) {
+            next(error)
+        }
+    }
+    static async upadate(req, res, next) {
+        try {
+            const { id }= req.params;
+            const {name,address, birthdate,role } = req.body;
+            const user= await db("users").where({id}).first()
+            if (!user) {
+                return res.boom.notFound("user not found")
+            }
+            // update data
+            await db.transaction(async function(trx) {
+                await db("users")
+                    .transacting(trx)
+                    .update({
+                       name,address,birthdate,role
+                    })
+                    .catch(err => {
+                        return res.boom.badRequest(err)
+                    })
+            })
+            return res.status(201).json({
+                success: true,
+                message: "user updated"
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    static async delete(req, res ,next) {
+        try {
+            const { id } = req.params;
+            const user = await db("users").where({id}).first()
+            if (!user) {
+                return res.boom.notFound("user not found")
+            }
+            await db("users").where({id}).del()
+
+            return res.status(201).json({
+                success: true,
+                message: "users deleted"
+            })
         } catch (error) {
             next(error)
         }
