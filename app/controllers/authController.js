@@ -19,24 +19,28 @@ module.exports = class authController {
             if (!user) {
                 return res.boom.unauthorized("wrong username, please check again!!")
             }
+            else if (user.role == "member") {
+                return res.boom.badRequest("you are not an officer")
+            }
             // check password
             if(!bcrypt.compareSync(value.password,user.password)){
                 return res.boom.unauthorized("wrong password, please check again!!!")
             }
+            
             const token = jwt.sign({
                 id: user.id,
+                role:user.role,
                 name: user.name,
-                username: user.username
-            },process.env.JWT_SECRET_KEY,{expiresIn: process.env.JWT_EXPIRED_TIME})
-            console.log(user);
+                username: user.username,
+            },process.env.JWT_SECRET_KEY,{expiresIn: process.env.JWT_TIME_EXPIRED})
             return res.json({
                 succces: true,
                 message: "user successfully logged in",
-                token
+                token: "Baerer ".concat(token)
             })
         } catch (error) {
-            // return res.boom.badRequest(error)
-            console.log(error);
+            return res.boom.badRequest(error)
+            // console.log(error);
         }
         
     }
