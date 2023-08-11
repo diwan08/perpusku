@@ -1,5 +1,4 @@
 require("dotenv").config()
-const { log } = require("console")
 const db            = require("../../databases")
 const bookSchema    =require("../validations/book.schema")
 

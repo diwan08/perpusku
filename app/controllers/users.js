@@ -86,7 +86,13 @@ module.exports = class userController{
     static async upadate(req, res, next) {
         try {
             const { id }= req.params;
-            const {name,address, birthdate,role } = req.body;
+            const {error, value}= userSchema.validate(req.body)
+            if (error) {
+                return res.boom.badRequest(error.message)
+            }
+            
+
+
             const user= await db("users").where({id}).first()
             if (!user) {
                 return res.boom.notFound("user not found")
@@ -96,7 +102,7 @@ module.exports = class userController{
                 await db("users")
                     .transacting(trx)
                     .update({
-                       name,address,birthdate,role
+                       
                     })
                     .catch(err => {
                         return res.boom.badRequest(err)
