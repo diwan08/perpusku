@@ -9,7 +9,7 @@ module.exports = class loanController {
             if (error) {
                 return res.boom.badData(error.message)
             }
-            await db.transactions(async function(trx) {
+            await db.transaction(async function(trx) {
                 await db("loans")
                     .transacting(trx)
                     .insert({

@@ -19,9 +19,9 @@ module.exports = class authController {
             if (!user) {
                 return res.boom.unauthorized("wrong username, please check again!!")
             }
-            else if (user.role == "member") {
-                return res.boom.badRequest("you are not an officer")
-            }
+            // else if (user.role == "member") {
+            //     return res.boom.badRequest("you are not an officer")
+            // }
             // check password
             if(!bcrypt.compareSync(value.password,user.password)){
                 return res.boom.unauthorized("wrong password, please check again!!!")

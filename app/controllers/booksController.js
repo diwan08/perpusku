@@ -5,30 +5,34 @@ const bookSchema    =require("../validations/book.schema")
 module.exports= class bookController {
     static async createBook(req, res ,next){
         try {
+            const roleUser= req.user.role
+            if (roleUser == "member") {
+                return res.boom.badRequest("User doesn't have permission")
+            }
             // check and retrieve request 
-        const {error , value}= bookSchema.validate(req.body)
-        if (error) {
-            return res.boom.badData(error.message)
-        }
-        // generate id 
-        const id = require("crypto").randomUUID()
+            const {error , value}= bookSchema.validate(req.body)
+            if (error) {
+                return res.boom.badData(error.message)
+            }
+            // generate id 
+            const id = require("crypto").randomUUID()
 
-        // insert data
-        await db.transaction(async function(trx) {
-            await db("books")
-                .transacting(trx)
-                .insert({
-                    id,
-                    name: value.name,
-                    author: value.author,
-                    category: value.category,
-                    publisher: value.publisher,
-                    publication_year: value.publication_year,
-                    stock: value.stock
-                })
-                .catch(err => {
-                    res.boom.badRequest(err)
-                })
+            // insert data
+            await db.transaction(async function(trx) {
+                await db("books")
+                    .transacting(trx)
+                    .insert({
+                        id,
+                        name: value.name,
+                        author: value.author,
+                        category: value.category,
+                        publisher: value.publisher,
+                        publication_year: value.publication_year,
+                        stock: value.stock
+                    })
+                    .catch(err => {
+                        res.boom.badRequest(err)
+                    })
         })
         return res.status(201).json({
             success:true,

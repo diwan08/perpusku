@@ -8,10 +8,7 @@ const bcrypt = require("bcrypt")
 module.exports = class userController{
     static async createUser(req, res, next){
         try {
-        //    const roleUser= req.user.role
-        //     if (roleUser == "member") {
-        //         return res.boom.badRequest("User doesn't have permission")
-        //     }
+           
             const {error, value}=userSchema.validate(req.body)
             if (error) {
                 return res.boom.badData(error.message)
